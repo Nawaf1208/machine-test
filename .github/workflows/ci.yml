@@ -1,0 +1,39 @@
+name: CI Pipeline
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    build:
+      
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Build backend image
+              run: docker build -t backend ./backend
+
+            - name: Build frontend image
+              run: docker build -t frontend ./frontend
+
+            - name: Run Django checks
+              run: |
+                docker run --rm \
+                -e SECRET_KEY="${{ secrets.SECRET_KEY }}" \
+                -e DEBUG="False" \
+                -e DB_NAME="${{ secrets.DB_NAME }}" \
+                -e DB_USER="${{ secrets.DB_USER }}" \
+                -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+                -e DB_HOST="${{ secrets.DB_HOST }}" \
+                -e DB_PORT="${{ secrets.DB_PORT }}" \
+                backend python manage.py check

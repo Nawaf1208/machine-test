@@ -4,3 +4,5 @@ django-cors-headers==4.9.0
 djangorestframework==3.16.1
 mysqlclient==2.2.8
 sqlparse==0.5.5
+gunicorn==25.1.0
+django-environ==0.10.0
